@@ -97,8 +97,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/userEntity.UserAccess"
                         }
                     }
                 }
@@ -131,9 +130,6 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
-                "avatar": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -141,10 +137,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 },
-                "phoneNumber": {
-                    "type": "integer"
+                "phone": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -160,12 +157,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "accessToken": {
-                    "type": "string"
-                },
-                "apiToken": {
-                    "type": "string"
-                },
-                "avatar": {
                     "type": "string"
                 },
                 "code": {
@@ -189,8 +180,8 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "phoneNumber": {
-                    "type": "integer"
+                "phone": {
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"

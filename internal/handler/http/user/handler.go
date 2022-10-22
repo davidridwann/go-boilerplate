@@ -3,12 +3,15 @@ package userHandler
 import (
 	"errors"
 	"fmt"
+	logEntity "github.com/davidridwann/wlb-test.git/internal/entity/log"
 	userEntity "github.com/davidridwann/wlb-test.git/internal/entity/user"
+	logRepository "github.com/davidridwann/wlb-test.git/internal/repository/log"
 	userUseCase "github.com/davidridwann/wlb-test.git/internal/usecase/user"
 	"github.com/davidridwann/wlb-test.git/pkg/helpers"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/goccy/go-json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -97,6 +100,29 @@ func (h *restHandler) Login(c *gin.Context) {
 	}
 
 	result, err := h.userUseCase.Login(request.Email, request.Password)
+	convertRes, _ := json.Marshal(result)
+	convertReq, _ := json.Marshal(request)
+
+	var res = logEntity.Response{
+		string(convertRes),
+	}
+	var user = logEntity.User{
+		string(convertRes),
+	}
+	var req = logEntity.Request{
+		string(convertReq),
+	}
+
+	log := logRepository.CreateLog(
+		"/auth/login",
+		user,
+		req,
+		res,
+		c,
+	)
+
+	fmt.Println(log)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Message: err.Error(),
@@ -117,7 +143,7 @@ func (h *restHandler) Login(c *gin.Context) {
 // @Tags         Authentication
 // @Produce      json
 // @Security	 BearerAuth
-// @Success      200  {object} map[string]interface{}
+// @Success      200  {object} userEntity.UserAccess
 // @Router       /auth/user [get]
 func (h *restHandler) User(c *gin.Context) {
 	fmt.Println(c.GetHeader("Authorization"))

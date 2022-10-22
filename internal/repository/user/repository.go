@@ -78,10 +78,8 @@ func (r *Repository) Create(in userEntity.User) (*userEntity.User, error) {
 		EmailIsVerified: false,
 		Username:        in.Username,
 		Password:        string(hashedPassword),
-		PhoneNumber:     0,
+		Phone:           in.Phone,
 		IsActive:        false,
-		Avatar:          "",
-		ApiToken:        "",
 		CreatedAt:       time.Time{},
 		UpdatedAt:       time.Time{},
 	}

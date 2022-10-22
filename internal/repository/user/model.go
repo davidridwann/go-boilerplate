@@ -14,10 +14,8 @@ type User struct {
 	EmailIsVerified bool
 	Username        string `gorm:"unique, omitempty"`
 	Password        string
-	PhoneNumber     int64 `gorm:"omitempty"`
+	Phone           string `gorm:"omitempty"`
 	IsActive        bool
-	Avatar          string `gorm:"omitempty"`
-	ApiToken        string `gorm:"index, omitempty"`
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
@@ -31,10 +29,8 @@ func (user *User) ToEntity() *userEntity.User {
 		EmailIsVerified: user.EmailIsVerified,
 		Username:        user.Username,
 		Password:        user.Password,
-		PhoneNumber:     user.PhoneNumber,
+		Phone:           user.Phone,
 		IsActive:        user.IsActive,
-		Avatar:          user.Avatar,
-		ApiToken:        user.ApiToken,
 		CreatedAt:       user.CreatedAt,
 		UpdatedAt:       user.UpdatedAt,
 	}
@@ -51,10 +47,8 @@ func (User) FromEntity(user *userEntity.User) *User {
 		EmailIsVerified: user.EmailIsVerified,
 		Username:        user.Username,
 		Password:        user.Password,
-		PhoneNumber:     user.PhoneNumber,
+		Phone:           user.Phone,
 		IsActive:        user.IsActive,
-		Avatar:          user.Avatar,
-		ApiToken:        user.ApiToken,
 	}
 }
 

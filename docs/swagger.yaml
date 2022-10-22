@@ -13,16 +13,15 @@ definitions:
     type: object
   userEntity.User:
     properties:
-      avatar:
-        type: string
       email:
         type: string
       name:
         type: string
       password:
+        minLength: 6
         type: string
-      phoneNumber:
-        type: integer
+      phone:
+        type: string
       username:
         type: string
     required:
@@ -34,10 +33,6 @@ definitions:
   userEntity.UserAccess:
     properties:
       accessToken:
-        type: string
-      apiToken:
-        type: string
-      avatar:
         type: string
       code:
         type: string
@@ -53,8 +48,8 @@ definitions:
         type: boolean
       name:
         type: string
-      phoneNumber:
-        type: integer
+      phone:
+        type: string
       updated_at:
         type: string
       username:
@@ -120,8 +115,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/userEntity.UserAccess'
       security:
       - BearerAuth: []
       summary: Get user login data

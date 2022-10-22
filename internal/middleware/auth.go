@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/davidridwann/wlb-test.git/pkg/helpers"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -10,9 +9,15 @@ import (
 func Auth() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenString := context.GetHeader("Authorization")
-		fmt.Println(tokenString)
 		if tokenString == "" {
 			context.JSON(401, gin.H{"error": "Token is required"})
+			context.Abort()
+			return
+		}
+
+		checkToken := strings.Fields(tokenString)
+		if len(checkToken) != 2 {
+			context.JSON(401, gin.H{"error": "Token is invalid"})
 			context.Abort()
 			return
 		}

@@ -90,8 +90,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/userEntity.UserAccess"
                         }
                     }
                 }
@@ -124,9 +123,6 @@
                 "username"
             ],
             "properties": {
-                "avatar": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -134,10 +130,11 @@
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 },
-                "phoneNumber": {
-                    "type": "integer"
+                "phone": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -153,12 +150,6 @@
             ],
             "properties": {
                 "accessToken": {
-                    "type": "string"
-                },
-                "apiToken": {
-                    "type": "string"
-                },
-                "avatar": {
                     "type": "string"
                 },
                 "code": {
@@ -182,8 +173,8 @@
                 "name": {
                     "type": "string"
                 },
-                "phoneNumber": {
-                    "type": "integer"
+                "phone": {
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
