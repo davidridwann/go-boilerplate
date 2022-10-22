@@ -5,7 +5,6 @@ import (
 	"github.com/davidridwann/wlb-test.git/pkg/log"
 	mongoConfig "github.com/davidridwann/wlb-test.git/pkg/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
 	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 )
@@ -13,20 +12,6 @@ import (
 var logCollection *mongo.Collection = mongoConfig.GetCollection(mongoConfig.DB, "log")
 
 func CreateLog(path string, user logEntity.User, req logEntity.Request, res logEntity.Response, ctx *gin.Context) error {
-	convertUser, _ := json.Marshal(user)
-	convertReq, _ := json.Marshal(req)
-	convertRes, _ := json.Marshal(res)
-
-	res = logEntity.Response{
-		Response: string(convertRes),
-	}
-	user = logEntity.User{
-		User: string(convertUser),
-	}
-	req = logEntity.Request{
-		Request: string(convertReq),
-	}
-
 	data := Log{
 		Path:       path,
 		User:       LogUser(user),
