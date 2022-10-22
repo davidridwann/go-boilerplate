@@ -3,7 +3,7 @@ log:
   err: /dev/stderr
 
 http:
-  port: 8080
+  port: 8000
 grpc:
   port: 9000
 queue:
