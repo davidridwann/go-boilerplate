@@ -1,0 +1,46 @@
+log:
+  out: /dev/stdout
+  err: /dev/stderr
+
+http:
+  port: 8080
+grpc:
+  port: 9000
+queue:
+scheduler:
+  tasks:
+
+db_connections:
+  driver: pgsql
+  host: localhost
+  port: 5432
+  dbname: wlb_test
+  user: postgres
+  password: 123
+  mode: 3
+  level: 3
+  enable: true
+  threshold: 1
+cache:
+  provider: redis
+
+redis:
+  host: redis
+  port: 6379
+  password:
+
+tracer:
+  provider:
+
+s3:
+  - main:
+      bucket:
+      user:
+      key:
+
+trusted-proxies:
+  host:
+
+allow-cors:
+  host:
+
