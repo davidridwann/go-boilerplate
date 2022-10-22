@@ -100,6 +100,8 @@ func (h *restHandler) Login(c *gin.Context) {
 	}
 
 	result, err := h.userUseCase.Login(request.Email, request.Password)
+
+	// Store log
 	convertRes, _ := json.Marshal(result)
 	convertReq, _ := json.Marshal(request)
 
@@ -113,15 +115,13 @@ func (h *restHandler) Login(c *gin.Context) {
 		string(convertReq),
 	}
 
-	log := logRepository.CreateLog(
+	_ = logRepository.CreateLog(
 		"/auth/login",
 		user,
 		req,
 		res,
 		c,
 	)
-
-	fmt.Println(log)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
