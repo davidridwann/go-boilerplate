@@ -1,0 +1,135 @@
+basePath: /api
+definitions:
+  userEntity.AuthRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  userEntity.User:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phoneNumber:
+        type: integer
+      username:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - username
+    type: object
+  userEntity.UserAccess:
+    properties:
+      accessToken:
+        type: string
+      apiToken:
+        type: string
+      avatar:
+        type: string
+      code:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      emailIsVerified:
+        type: boolean
+      id:
+        type: integer
+      isActive:
+        type: boolean
+      name:
+        type: string
+      phoneNumber:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - name
+    - username
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: BackEnd TEST API Documentations
+  title: WorkLife&Beyond BackEnd TEST API Docs
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      description: Login a user account
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userEntity.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userEntity.UserAccess'
+      summary: Login a user account
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      description: Register a new user account
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/userEntity.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/userEntity.UserAccess'
+      summary: Register a user account
+      tags:
+      - Authentication
+  /auth/user:
+    get:
+      description: Responds with the data of user login.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user login data
+      tags:
+      - Authentication
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

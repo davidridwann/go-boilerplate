@@ -2,6 +2,7 @@ package userHandler
 
 import (
 	"errors"
+	"fmt"
 	userEntity "github.com/davidridwann/wlb-test.git/internal/entity/user"
 	userUseCase "github.com/davidridwann/wlb-test.git/internal/usecase/user"
 	"github.com/davidridwann/wlb-test.git/pkg/helpers"
@@ -51,6 +52,14 @@ func (h *restHandler) Get(c *gin.Context) {
 	}
 }
 
+// Register      godoc
+// @Summary      Register a user account
+// @Description  Register a new user account
+// @Tags         Authentication
+// @Produce      json
+// @Param 		 request body userEntity.User true "query params"
+// @Success      200  {object} userEntity.UserAccess
+// @Router       /auth/register [post]
 func (h *restHandler) Register(c *gin.Context) {
 	body := &userEntity.User{}
 	err := c.ShouldBindBodyWith(&body, binding.JSON)
@@ -61,12 +70,20 @@ func (h *restHandler) Register(c *gin.Context) {
 
 	result, err := h.userUseCase.Register(*body)
 	if err == nil {
-		c.JSON(http.StatusOK, SuccessResponse{Data: result, Message: "Registrasi Berhasil"})
+		c.JSON(http.StatusOK, SuccessResponse{Data: result, Message: "Register Successfully"})
 	} else {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
 	}
 }
 
+// Login      godoc
+// @Summary      Login a user account
+// @Description  Login a user account
+// @Tags         Authentication
+// @Produce      json
+// @Param 		 request body userEntity.AuthRequest true "query params"
+// @Success      200  {object} userEntity.UserAccess
+// @Router       /auth/login [post]
 func (h *restHandler) Login(c *gin.Context) {
 	var request userEntity.AuthRequest
 
@@ -94,7 +111,16 @@ func (h *restHandler) Login(c *gin.Context) {
 	}
 }
 
+// User          godoc
+// @Summary      Get user login data
+// @Description  Responds with the data of user login.
+// @Tags         Authentication
+// @Produce      json
+// @Security	 BearerAuth
+// @Success      200  {object} map[string]interface{}
+// @Router       /auth/user [get]
 func (h *restHandler) User(c *gin.Context) {
+	fmt.Println(c.GetHeader("Authorization"))
 	token, err := jwt.ParseWithClaims(strings.Split(c.GetHeader("Authorization"), "Bearer ")[1], &helpers.JWTClaim{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte("supersecretkey"), nil
 	})
