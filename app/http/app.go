@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/davidridwann/wlb-test.git/internal/config"
+	postEntity "github.com/davidridwann/wlb-test.git/internal/entity/post"
 	userEntity "github.com/davidridwann/wlb-test.git/internal/entity/user"
 	"github.com/davidridwann/wlb-test.git/pkg/log"
 	"github.com/davidridwann/wlb-test.git/pkg/mongo"
@@ -15,7 +16,7 @@ func startApp(config config.App) error {
 		log.Err().Fatalln("Failed to Initialized postgres DB:", err)
 	}
 
-	err = db.AutoMigrate(&userEntity.User{})
+	err = db.AutoMigrate(&userEntity.User{}, &postEntity.Post{})
 	if err != nil {
 		log.Err().Fatalln("Failed to AutoMigrate Entity:", err)
 	}

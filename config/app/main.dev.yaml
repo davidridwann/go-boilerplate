@@ -10,13 +10,16 @@ queue:
 scheduler:
   tasks:
 
+image:
+  path: /Users/forelyx/web_services/go/wlb-test/image/
+
 db_connections:
   driver: pgsql
-  host: 107.155.65.82
-  port: 5433
+  host: localhost
+  port: 5432
   dbname: wlb_test
   user: postgres
-  password: qweAsd123!@#
+  password: 123
   mode: 3
   level: 3
   enable: true

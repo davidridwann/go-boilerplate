@@ -1,5 +1,31 @@
 basePath: /api
 definitions:
+  postEntity.Post:
+    properties:
+      caption:
+        type: string
+      is_comment:
+        type: boolean
+    required:
+    - caption
+    type: object
+  postEntity.PostShow:
+    properties:
+      caption:
+        type: string
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      is_comment:
+        type: boolean
+      updated_at:
+        type: string
+    type: object
   userEntity.AuthRequest:
     properties:
       email:
@@ -121,6 +147,131 @@ paths:
       summary: Get user login data
       tags:
       - Authentication
+  /post:
+    get:
+      description: Get all post
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/postEntity.PostShow'
+      security:
+      - BearerAuth: []
+      summary: Get all post
+      tags:
+      - Post
+  /post/create:
+    post:
+      description: Create a new post
+      parameters:
+      - description: Post Caption
+        in: formData
+        name: caption
+        required: true
+        type: string
+      - description: Post Enable/Disable
+        in: formData
+        name: is_comment
+        required: true
+        type: boolean
+      - description: Post Image
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - multipart/form-data
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/postEntity.Post'
+      security:
+      - BearerAuth: []
+      summary: Create a new post
+      tags:
+      - Post
+  /post/delete:
+    delete:
+      description: Soft Delete an existing post
+      parameters:
+      - description: Existing Post Code
+        in: formData
+        name: code
+        required: true
+        type: string
+      produces:
+      - multipart/form-data
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Soft Delete an existing post
+      tags:
+      - Post
+  /post/show:
+    get:
+      description: Show a specific post
+      parameters:
+      - description: Post Code
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/postEntity.PostShow'
+      security:
+      - BearerAuth: []
+      summary: Show a specific post
+      tags:
+      - Post
+  /post/update:
+    put:
+      description: Update an existing post
+      parameters:
+      - description: Existing Post Code
+        in: formData
+        name: code
+        required: true
+        type: string
+      - description: Post Caption
+        in: formData
+        name: caption
+        required: true
+        type: string
+      - description: Post Enable/Disable
+        in: formData
+        name: is_comment
+        required: true
+        type: boolean
+      - description: Post Image
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - multipart/form-data
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/postEntity.Post'
+      security:
+      - BearerAuth: []
+      summary: Update an existing post
+      tags:
+      - Post
 securityDefinitions:
   BearerAuth:
     in: header

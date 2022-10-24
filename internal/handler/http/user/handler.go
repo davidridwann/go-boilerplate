@@ -17,17 +17,6 @@ import (
 	"strings"
 )
 
-type SuccessResponse struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
-}
-
-type ErrorResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-}
-
 type restHandler struct {
 	userUseCase userUseCase.IUseCase
 }
@@ -42,15 +31,15 @@ func (h *restHandler) Get(c *gin.Context) {
 
 	data, err := h.userUseCase.Get(id)
 	if err == nil {
-		c.JSON(http.StatusOK, SuccessResponse{
+		c.JSON(http.StatusOK, helpers.SuccessResponse{
 			Message: "Successfully retrieved",
 			Data:    data,
 		})
 	} else {
 		if errors.Is(err, userUseCase.ErrUnexpected) {
-			c.JSON(http.StatusNotFound, ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusNotFound, helpers.ErrorResponse{Message: err.Error()})
 		} else {
-			c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
 		}
 	}
 }
@@ -67,15 +56,15 @@ func (h *restHandler) Register(c *gin.Context) {
 	body := &userEntity.User{}
 	err := c.ShouldBindBodyWith(&body, binding.JSON)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
 		return
 	}
 
 	result, err := h.userUseCase.Register(*body)
 	if err == nil {
-		c.JSON(http.StatusOK, SuccessResponse{Data: result, Message: "Register Successfully"})
+		c.JSON(http.StatusOK, helpers.SuccessResponse{Data: result, Message: "Register Successfully"})
 	} else {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
 	}
 }
 
@@ -92,7 +81,7 @@ func (h *restHandler) Login(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 			Message: err.Error(),
 			Success: false,
 		})
@@ -106,13 +95,13 @@ func (h *restHandler) Login(c *gin.Context) {
 	convertReq, _ := json.Marshal(request)
 
 	var res = logEntity.Response{
-		string(convertRes),
+		Response: string(convertRes),
 	}
 	var user = logEntity.User{
-		string(convertRes),
+		User: string(convertRes),
 	}
 	var req = logEntity.Request{
-		string(convertReq),
+		Request: string(convertReq),
 	}
 
 	_ = logRepository.CreateLog(
@@ -124,12 +113,12 @@ func (h *restHandler) Login(c *gin.Context) {
 	)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 			Message: err.Error(),
 			Success: false,
 		})
 	} else {
-		c.JSON(http.StatusOK, SuccessResponse{
+		c.JSON(http.StatusOK, helpers.SuccessResponse{
 			Data:    result,
 			Message: "Login Successfully",
 			Success: true,
@@ -152,7 +141,7 @@ func (h *restHandler) User(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 			Message: err.Error(),
 			Success: false,
 		})
@@ -161,19 +150,19 @@ func (h *restHandler) User(c *gin.Context) {
 	if claims, ok := token.Claims.(*helpers.JWTClaim); ok && token.Valid {
 		result, err := h.userUseCase.Get(claims.Id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, ErrorResponse{
+			c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 				Message: err.Error(),
 				Success: false,
 			})
 		} else {
-			c.JSON(http.StatusOK, SuccessResponse{
+			c.JSON(http.StatusOK, helpers.SuccessResponse{
 				Data:    result,
 				Message: "Login Successfully",
 				Success: true,
 			})
 		}
 	} else {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 			Message: err.Error(),
 			Success: false,
 		})

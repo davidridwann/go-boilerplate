@@ -102,9 +102,246 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/post": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all post",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Get all post",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/postEntity.PostShow"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/create": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new post",
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Create a new post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post Caption",
+                        "name": "caption",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Post Enable/Disable",
+                        "name": "is_comment",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Post Image",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/postEntity.Post"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Soft Delete an existing post",
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Soft Delete an existing post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Existing Post Code",
+                        "name": "code",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/post/show": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Show a specific post",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Show a specific post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post Code",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/postEntity.PostShow"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/update": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing post",
+                "produces": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Update an existing post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Existing Post Code",
+                        "name": "code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Post Caption",
+                        "name": "caption",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Post Enable/Disable",
+                        "name": "is_comment",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Post Image",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/postEntity.Post"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "postEntity.Post": {
+            "type": "object",
+            "required": [
+                "caption"
+            ],
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "is_comment": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "postEntity.PostShow": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "is_comment": {
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "userEntity.AuthRequest": {
             "type": "object",
             "required": [
