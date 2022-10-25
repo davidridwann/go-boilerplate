@@ -3,7 +3,7 @@ FROM golang:latest as builder
 ARG GITHUB_TOKEN
 
 RUN mkdir /app
-ADD . /app
+ADD ../.. /app
 WORKDIR /app
 
 RUN GOOS=linux go build -o /bin/goapp
