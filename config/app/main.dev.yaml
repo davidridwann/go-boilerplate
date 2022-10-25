@@ -15,11 +15,11 @@ image:
 
 db_connections:
   driver: pgsql
-  host: localhost
-  port: 5432
+  host: 107.155.65.82
+  port: 5433
   dbname: wlb_test
   user: postgres
-  password: 123
+  password: qweAsd123!@#
   mode: 3
   level: 3
   enable: true

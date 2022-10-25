@@ -16,7 +16,6 @@ type Post struct {
 	IsComment bool      `json:"is_comment"`
 	CreatedAt time.Time `json:"created_at" swaggerignore:"true"`
 	UpdatedAt time.Time `json:"updated_at" swaggerignore:"true"`
-	DeletedAt time.Time `json:"deleted_at" swaggerignore:"true"`
 }
 
 type PostShow struct {

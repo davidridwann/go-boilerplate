@@ -25,7 +25,7 @@ type PostRepository interface {
 	Show(code string) (*postEntity.PostShow, error)
 	Create(caption string, isComment bool, user string, c *gin.Context) (*postEntity.PostShow, error)
 	Update(post postEntity.PostForm, c *gin.Context) (*postEntity.PostShow, error)
-	SoftDeletePost(code string) error
+	Delete(code string) error
 }
 
 type Repository struct {
@@ -43,7 +43,7 @@ func (r *Repository) Get() ([]*postEntity.PostShow, error) {
 	var commentWithReply []commentEntity.CommentWithReply
 	var replyData []replyEntity.Reply
 
-	err := r.db.Raw(`SELECT * FROM posts WHERE deleted_at IS NULL`).Find(&postData).Error
+	err := r.db.Raw(`SELECT * FROM posts`).Find(&postData).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrPostNotFound
@@ -211,8 +211,8 @@ func (r *Repository) Update(param postEntity.PostForm, c *gin.Context) (*postEnt
 	return post, nil
 }
 
-func (r *Repository) SoftDeletePost(code string) error {
-	err := r.db.Table("posts").Where("code = ?", code).Update("deleted_at", time.Now()).Error
+func (r *Repository) Delete(code string) error {
+	err := r.db.Where("code = ?", code).Delete(&Post{}).Error
 	if err != nil {
 		log.Err().Error(err)
 		return err

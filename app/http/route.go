@@ -89,7 +89,7 @@ func newRoutes(db *gorm.DB) *gin.Engine {
 					post.GET("show", handlerPost.Show)
 					post.POST("create", handlerPost.Create)
 					post.PUT("update", handlerPost.Update)
-					post.DELETE("delete", handlerPost.SoftDeletePost)
+					post.DELETE("delete", handlerPost.Delete)
 
 					// like
 					post.POST("like", handlerLike.Like)

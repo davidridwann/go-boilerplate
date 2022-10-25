@@ -157,19 +157,19 @@ func (h *restHandler) Update(c *gin.Context) {
 	}
 }
 
-// SoftDeletePost      	 godoc
+// Delete      	 godoc
 // @Summary      Soft Delete an existing post
 // @Description  Soft Delete an existing post
 // @Tags         Post
 // @Produce      mpfd
 // @Security	 BearerAuth
-// @Param        code  formData    string  true  "Existing Post Code"
+// @Param        code  query    string  true  "Existing Post Code"
 // @Success      200  {object} map[string]interface{}
 // @Router       /post/delete [delete]
-func (h *restHandler) SoftDeletePost(c *gin.Context) {
-	param := c.Param("code")
+func (h *restHandler) Delete(c *gin.Context) {
+	param := c.Query("code")
 
-	err := h.postUseCase.SoftDeletePost(param)
+	err := h.postUseCase.Delete(param)
 	if err != nil {
 		if errors.Is(err, postUseCase.ErrUnexpected) {
 			c.JSON(http.StatusNotFound, helpers.ErrorResponse{Message: err.Error()})

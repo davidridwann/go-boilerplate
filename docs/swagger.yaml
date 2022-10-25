@@ -327,7 +327,7 @@ paths:
       description: Soft Delete an existing post
       parameters:
       - description: Existing Post Code
-        in: formData
+        in: query
         name: code
         required: true
         type: string

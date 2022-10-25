@@ -331,7 +331,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Existing Post Code",
                         "name": "code",
-                        "in": "formData",
+                        "in": "query",
                         "required": true
                     }
                 ],

@@ -7,5 +7,5 @@ type RestHandler interface {
 	Show(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
-	SoftDeletePost(c *gin.Context)
+	Delete(c *gin.Context)
 }

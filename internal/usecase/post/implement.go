@@ -58,8 +58,8 @@ func (uc *IUseCaseImplementation) Update(post postEntity.PostForm, c *gin.Contex
 	return data, nil
 }
 
-func (uc *IUseCaseImplementation) SoftDeletePost(code string) error {
-	err := uc.postRepository.SoftDeletePost(code)
+func (uc *IUseCaseImplementation) Delete(code string) error {
+	err := uc.postRepository.Delete(code)
 	if err != nil {
 		return err
 	}
