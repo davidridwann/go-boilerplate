@@ -30,7 +30,7 @@ import (
 // @version 1.0
 // @description BackEnd TEST API Documentations
 
-// @host localhost:8000
+// @host wlb.sociolite.id
 // @basePath /api
 
 // @securityDefinitions.apikey BearerAuth
