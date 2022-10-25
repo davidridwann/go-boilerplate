@@ -74,7 +74,7 @@ func (uc *IUseCaseImplementation) Login(email string, password string) (*userEnt
 		IsActive:        user.IsActive,
 		CreatedAt:       user.CreatedAt,
 		UpdatedAt:       user.UpdatedAt,
-		AccessToken:     accessToken,
+		AccessToken:     "Bearer " + accessToken,
 	}, nil
 }
 
