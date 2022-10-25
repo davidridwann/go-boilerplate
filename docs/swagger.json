@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8000",
+    "host": "wlb.sociolite.id",
     "basePath": "/api",
     "paths": {
         "/auth/login": {

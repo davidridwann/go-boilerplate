@@ -126,7 +126,7 @@ definitions:
     - name
     - username
     type: object
-host: localhost:8000
+host: wlb.sociolite.id
 info:
   contact: {}
   description: BackEnd TEST API Documentations
