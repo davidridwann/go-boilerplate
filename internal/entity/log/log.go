@@ -9,7 +9,7 @@ type Log struct {
 	Id         primitive.ObjectID `json:"id,omitempty"`
 	Path       string             `json:"path"`
 	User       User               `json:"user"`
-	TimeToLive float64            `json:"timeToLive"`
+	TimeToLive string             `json:"timeToLive"`
 	Request    Request            `json:"request"`
 	Response   Response           `json:"response"`
 	CreatedAt  time.Time          `json:"created_at"`

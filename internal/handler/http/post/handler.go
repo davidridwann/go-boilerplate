@@ -1,22 +1,25 @@
 package postHandler
 
 import (
-	"fmt"
 	_ "github.com/davidridwann/wlb-test.git/internal/entity/post"
 	postEntity "github.com/davidridwann/wlb-test.git/internal/entity/post"
 	postUseCase "github.com/davidridwann/wlb-test.git/internal/usecase/post"
+	userUseCase "github.com/davidridwann/wlb-test.git/internal/usecase/user"
 	"github.com/davidridwann/wlb-test.git/pkg/helpers"
+	"github.com/davidridwann/wlb-test.git/pkg/log"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 	"github.com/pkg/errors"
 	"net/http"
 )
 
 type restHandler struct {
 	postUseCase postUseCase.IUseCase
+	useCaseUser userUseCase.IUseCase
 }
 
-func New(postUseCase postUseCase.IUseCase) RestHandler {
-	return &restHandler{postUseCase}
+func New(postUseCase postUseCase.IUseCase, useCaseUser userUseCase.IUseCase) RestHandler {
+	return &restHandler{postUseCase, useCaseUser}
 }
 
 // Get      	 godoc
@@ -54,9 +57,16 @@ func (h *restHandler) Get(c *gin.Context) {
 // @Router       /post/show [get]
 func (h *restHandler) Show(c *gin.Context) {
 	param := c.Query("code")
-	fmt.Println(param)
 	data, err := h.postUseCase.Show(param)
 	if err == nil {
+		claims := helpers.GetUser(c)
+		convertUser, _ := json.Marshal(claims)
+		convertResponse, _ := json.Marshal(data)
+		_, err = helpers.CreateLog("/post/show", string(convertUser), param, string(convertResponse), c)
+		if err != nil {
+			log.Err().Panic(err)
+		}
+
 		c.JSON(http.StatusOK, helpers.SuccessResponse{
 			Message: "Successfully retrieved",
 			Data:    data,
@@ -90,8 +100,18 @@ func (h *restHandler) Create(c *gin.Context) {
 		})
 		return
 	}
-	result, err := h.postUseCase.Create(form.Caption, form.IsComment, c)
+	claims := helpers.GetUser(c)
+
+	result, err := h.postUseCase.Create(form.Caption, form.IsComment, claims.Code, c)
 	if err == nil {
+		convertUser, _ := json.Marshal(claims)
+		convertRequest, _ := json.Marshal(form)
+		convertResponse, _ := json.Marshal(result)
+		_, err = helpers.CreateLog("/post/create", string(convertUser), string(convertRequest), string(convertResponse), c)
+		if err != nil {
+			log.Err().Panic(err)
+		}
+
 		c.JSON(http.StatusOK, helpers.SuccessResponse{Data: result, Message: "Successfully create new post"})
 	} else {
 		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
@@ -122,6 +142,15 @@ func (h *restHandler) Update(c *gin.Context) {
 
 	result, err := h.postUseCase.Update(form, c)
 	if err == nil {
+		claims := helpers.GetUser(c)
+		convertUser, _ := json.Marshal(claims)
+		convertRequest, _ := json.Marshal(form)
+		convertResponse, _ := json.Marshal(result)
+		_, err = helpers.CreateLog("/post/update", string(convertUser), string(convertRequest), string(convertResponse), c)
+		if err != nil {
+			log.Err().Panic(err)
+		}
+
 		c.JSON(http.StatusOK, helpers.SuccessResponse{Data: result, Message: "Successfully create new post"})
 	} else {
 		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
@@ -147,6 +176,13 @@ func (h *restHandler) SoftDeletePost(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
 		}
+	}
+
+	claims := helpers.GetUser(c)
+	convertUser, _ := json.Marshal(claims)
+	_, err = helpers.CreateLog("/post/delete", string(convertUser), param, "Successfully deleted post", c)
+	if err != nil {
+		log.Err().Panic(err)
 	}
 
 	c.JSON(http.StatusOK, helpers.SuccessResponse{

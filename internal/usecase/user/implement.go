@@ -6,6 +6,7 @@ import (
 	userEntity "github.com/davidridwann/wlb-test.git/internal/entity/user"
 	userRepository "github.com/davidridwann/wlb-test.git/internal/repository/user"
 	"github.com/davidridwann/wlb-test.git/pkg/helpers"
+	"github.com/davidridwann/wlb-test.git/pkg/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,8 +18,8 @@ func NewUseCase(userRepository userRepository.UserRepository) IUseCase {
 	return &IUseCaseImplementation{userRepository}
 }
 
-func (uc *IUseCaseImplementation) Get(id int) (*userEntity.User, error) {
-	data, err := uc.userRepository.Get(id)
+func (uc *IUseCaseImplementation) Get(code string) (*userEntity.User, error) {
+	data, err := uc.userRepository.Get(code)
 	if err != nil {
 		if errors.Is(err, userRepository.ErrUserNotFound) {
 			return nil, ErrUserNotFound
@@ -35,7 +36,6 @@ func (uc *IUseCaseImplementation) Register(in userEntity.User) (*userEntity.User
 		return nil, ErrEmailExists
 	}
 
-	fmt.Println(in)
 	data, err := uc.userRepository.Create(in)
 	if err != nil {
 		return nil, ErrUnexpected
@@ -76,4 +76,14 @@ func (uc *IUseCaseImplementation) Login(email string, password string) (*userEnt
 		UpdatedAt:       user.UpdatedAt,
 		AccessToken:     accessToken,
 	}, nil
+}
+
+func (uc *IUseCaseImplementation) VerifAccount(token string) error {
+	err := uc.userRepository.VerifAccount(token)
+	if err != nil {
+		log.Err().Error(err)
+		return err
+	}
+
+	return nil
 }

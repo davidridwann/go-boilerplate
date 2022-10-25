@@ -2,8 +2,10 @@ package helpers
 
 import (
 	"errors"
+	"github.com/davidridwann/wlb-test.git/pkg/log"
 	"github.com/dgrijalva/jwt-go"
-	"log"
+	"github.com/gin-gonic/gin"
+	"strings"
 	"time"
 )
 
@@ -72,7 +74,25 @@ func ExtractClaims(tokenStr string) (jwt.MapClaims, error) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, err
 	} else {
-		log.Printf("Invalid JWT Token")
+		log.Err().Fatalln("Invalid JWT Token")
 		return nil, err
 	}
+}
+
+func GetUser(c *gin.Context) *JWTClaim {
+	token, err := jwt.ParseWithClaims(strings.Split(c.GetHeader("Authorization"), "Bearer ")[1], &JWTClaim{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte("supersecretkey"), nil
+	})
+
+	if err != nil {
+		log.Err().Fatal(err)
+	}
+
+	if claims, ok := token.Claims.(*JWTClaim); ok && token.Valid {
+		return claims
+	} else {
+		log.Err().Fatal(err)
+	}
+
+	return nil
 }

@@ -103,6 +103,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/verification-account": {
+            "post": {
+                "description": "Verification user account",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verification user account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Verification token",
+                        "name": "verif",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/log": {
+            "get": {
+                "description": "Log activity",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Log"
+                ],
+                "summary": "Log activity",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/post": {
             "get": {
                 "security": [
@@ -123,6 +174,90 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/postEntity.PostShow"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/comment": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Comment a post",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Comment a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post Code",
+                        "name": "post_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Comment",
+                        "name": "comment",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/post/comment/reply": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Reply a comment",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reply"
+                ],
+                "summary": "Reply a comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comment Code",
+                        "name": "comment_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Reply",
+                        "name": "reply",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -211,6 +346,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/post/like": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Like a post",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Like"
+                ],
+                "summary": "Like a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post Code",
+                        "name": "post_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/post/show": {
             "get": {
                 "security": [
@@ -240,6 +410,41 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/postEntity.PostShow"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/unlike": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Unlike a post",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Like"
+                ],
+                "summary": "Unlike a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post Code",
+                        "name": "post_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -302,6 +507,43 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "commentEntity.CommentWithReply": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "post_id": {
+                    "type": "string"
+                },
+                "replies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/replyEntity.Reply"
+                    }
+                },
+                "text": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "likeEntity.Like": {
+            "type": "object",
+            "required": [
+                "user_id"
+            ],
+            "properties": {
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "postEntity.Post": {
             "type": "object",
             "required": [
@@ -325,6 +567,12 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/commentEntity.CommentWithReply"
+                    }
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -337,7 +585,27 @@ const docTemplate = `{
                 "is_comment": {
                     "type": "boolean"
                 },
+                "likes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/likeEntity.Like"
+                    }
+                },
                 "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "replyEntity.Reply": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "text": {
                     "type": "string"
                 }
             }

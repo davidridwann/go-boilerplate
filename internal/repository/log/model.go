@@ -15,7 +15,7 @@ type Log struct {
 	Id         primitive.ObjectID `gorm:"primarykey"`
 	Path       string
 	User       LogUser
-	TimeToLive float64
+	TimeToLive string
 	Request    LogRequest
 	Response   LogResponse
 	CreatedAt  time.Time

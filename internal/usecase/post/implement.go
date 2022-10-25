@@ -40,8 +40,8 @@ func (uc *IUseCaseImplementation) Show(code string) (*postEntity.PostShow, error
 	return data, nil
 }
 
-func (uc *IUseCaseImplementation) Create(caption string, isComment bool, c *gin.Context) (*postEntity.PostShow, error) {
-	data, err := uc.postRepository.Create(caption, isComment, c)
+func (uc *IUseCaseImplementation) Create(caption string, isComment bool, user string, c *gin.Context) (*postEntity.PostShow, error) {
+	data, err := uc.postRepository.Create(caption, isComment, user, c)
 	if err != nil {
 		return nil, ErrUnexpected
 	}

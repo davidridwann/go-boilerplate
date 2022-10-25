@@ -6,4 +6,5 @@ type RestHandler interface {
 	Register(c *gin.Context)
 	Login(c *gin.Context)
 	User(c *gin.Context)
+	VerifAccount(c *gin.Context)
 }

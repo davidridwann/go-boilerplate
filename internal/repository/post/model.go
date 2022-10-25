@@ -10,6 +10,7 @@ type Post struct {
 	Code      string `gorm:"unique"`
 	Caption   string
 	Image     string
+	UserId    string
 	IsComment bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -21,6 +22,7 @@ func (post *Post) ToEntity() *postEntity.Post {
 		Code:      post.Code,
 		Caption:   post.Caption,
 		Image:     post.Image,
+		UserId:    post.UserId,
 		IsComment: post.IsComment,
 		CreatedAt: post.CreatedAt,
 		UpdatedAt: post.UpdatedAt,
@@ -33,6 +35,7 @@ func (post *Post) ToEntityShow() *postEntity.PostShow {
 		Code:      post.Code,
 		Caption:   post.Caption,
 		Image:     post.Image,
+		UserId:    post.UserId,
 		IsComment: post.IsComment,
 		CreatedAt: post.CreatedAt,
 		UpdatedAt: post.UpdatedAt,

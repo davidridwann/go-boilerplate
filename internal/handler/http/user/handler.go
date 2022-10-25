@@ -2,19 +2,15 @@ package userHandler
 
 import (
 	"errors"
-	"fmt"
 	logEntity "github.com/davidridwann/wlb-test.git/internal/entity/log"
 	userEntity "github.com/davidridwann/wlb-test.git/internal/entity/user"
 	logRepository "github.com/davidridwann/wlb-test.git/internal/repository/log"
 	userUseCase "github.com/davidridwann/wlb-test.git/internal/usecase/user"
 	"github.com/davidridwann/wlb-test.git/pkg/helpers"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/goccy/go-json"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
 type restHandler struct {
@@ -26,10 +22,9 @@ func New(userUseCase userUseCase.IUseCase) RestHandler {
 }
 
 func (h *restHandler) Get(c *gin.Context) {
-	param := c.Param("id")
-	id, _ := strconv.Atoi(param)
+	param := c.Param("code")
 
-	data, err := h.userUseCase.Get(id)
+	data, err := h.userUseCase.Get(param)
 	if err == nil {
 		c.JSON(http.StatusOK, helpers.SuccessResponse{
 			Message: "Successfully retrieved",
@@ -62,13 +57,15 @@ func (h *restHandler) Register(c *gin.Context) {
 
 	result, err := h.userUseCase.Register(*body)
 	if err == nil {
-		c.JSON(http.StatusOK, helpers.SuccessResponse{Data: result, Message: "Register Successfully"})
+		helpers.SendActivationMail(result.Email, result.Code, c)
+
+		c.JSON(http.StatusOK, helpers.SuccessResponse{Data: result, Message: "Register Successfully, please check your email"})
 	} else {
 		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
 	}
 }
 
-// Login      godoc
+// Login         godoc
 // @Summary      Login a user account
 // @Description  Login a user account
 // @Tags         Authentication
@@ -89,7 +86,13 @@ func (h *restHandler) Login(c *gin.Context) {
 	}
 
 	result, err := h.userUseCase.Login(request.Email, request.Password)
-
+	if result.IsActive == false {
+		c.JSON(http.StatusUnauthorized, helpers.ErrorResponse{
+			Message: "Account is not active, please verif your account",
+			Success: false,
+		})
+		return
+	}
 	// Store log
 	convertRes, _ := json.Marshal(result)
 	convertReq, _ := json.Marshal(request)
@@ -104,7 +107,7 @@ func (h *restHandler) Login(c *gin.Context) {
 		Request: string(convertReq),
 	}
 
-	_ = logRepository.CreateLog(
+	_, _ = logRepository.CreateLog(
 		"/auth/login",
 		user,
 		req,
@@ -135,36 +138,44 @@ func (h *restHandler) Login(c *gin.Context) {
 // @Success      200  {object} userEntity.UserAccess
 // @Router       /auth/user [get]
 func (h *restHandler) User(c *gin.Context) {
-	fmt.Println(c.GetHeader("Authorization"))
-	token, err := jwt.ParseWithClaims(strings.Split(c.GetHeader("Authorization"), "Bearer ")[1], &helpers.JWTClaim{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("supersecretkey"), nil
-	})
-
+	claims := helpers.GetUser(c)
+	result, err := h.userUseCase.Get(claims.Code)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 			Message: err.Error(),
 			Success: false,
 		})
-	}
-
-	if claims, ok := token.Claims.(*helpers.JWTClaim); ok && token.Valid {
-		result, err := h.userUseCase.Get(claims.Id)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
-				Message: err.Error(),
-				Success: false,
-			})
-		} else {
-			c.JSON(http.StatusOK, helpers.SuccessResponse{
-				Data:    result,
-				Message: "Login Successfully",
-				Success: true,
-			})
-		}
 	} else {
+		c.JSON(http.StatusOK, helpers.SuccessResponse{
+			Data:    result,
+			Message: "Login Successfully",
+			Success: true,
+		})
+	}
+}
+
+// VerifAccount User          godoc
+// @Summary      Verification user account
+// @Description  Verification user account
+// @Tags         Authentication
+// @Produce      json
+// @Param        verif  query    string  true  "Verification token"
+// @Success      200  {object} map[string]interface{}
+// @Router       /auth/verification-account [post]
+func (h *restHandler) VerifAccount(c *gin.Context) {
+	token := c.Query("verif")
+	err := c.ShouldBind(token)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{
 			Message: err.Error(),
-			Success: false,
 		})
+		return
+	}
+
+	err = h.userUseCase.VerifAccount(token)
+	if err == nil {
+		c.JSON(http.StatusOK, helpers.SuccessResponse{Message: "Successfully verif a account"})
+	} else {
+		c.JSON(http.StatusInternalServerError, helpers.ErrorResponse{Message: err.Error()})
 	}
 }
